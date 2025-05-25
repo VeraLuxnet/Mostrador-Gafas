@@ -2,23 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Probador Virtual de Gafas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Probador de Gafas</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Probador de Gafas Virtual</h1>
-    <div class="container">
-        <video id="video" autoplay muted></video>
-        <canvas id="canvas"></canvas>
-    </div>
-    <button id="startBtn">Iniciar Cámara</button>
+    <video id="video" autoplay muted></video>
+    <canvas id="canvas"></canvas>
 
-    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
     <script src="main.js"></script>
 </body>
