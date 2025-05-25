@@ -1,0 +1,75 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Probador Virtual de Gafas</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { position: absolute; top: 0; left: 0; }
+    video { display: none; }
+  </style>
+</head>
+<body>
+  <video id="video" autoplay playsinline></video>
+  
+  <!-- Librerías necesarias -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.6.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+  
+  <script>
+    let scene, camera, renderer, model, video;
+    let modelLoaded = false;
+
+    async function init() {
+      // Inicializa la cámara
+      video = document.getElementById("video");
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+
+      // Configura Three.js
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 1000);
+      camera.position.z = 2;
+      renderer = new THREE.WebGLRenderer({ alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // Carga modelo 3D
+      const loader = new THREE.GLTFLoader();
+      loader.load('modelo-gafas.glb', (gltf) => {
+        model = gltf.scene;
+        model.scale.set(0.1, 0.1, 0.1); // ajusta la escala según tu modelo
+        scene.add(model);
+        modelLoaded = true;
+      });
+
+      // Cargar modelo de detección facial
+      const facemeshModel = await facemesh.load();
+
+      // Bucle de animación
+      async function animate() {
+        requestAnimationFrame(animate);
+        const predictions = await facemeshModel.estimateFaces({input: video});
+
+        if (modelLoaded && predictions.length > 0) {
+          const keypoints = predictions[0].scaledMesh;
+          const leftEye = keypoints[33];
+          const rightEye = keypoints[263];
+          const centerX = (leftEye[0] + rightEye[0]) / 2 / video.videoWidth * 2 - 1;
+          const centerY = -((leftEye[1] + rightEye[1]) / 2 / video.videoHeight * 2 - 1);
+          model.position.set(centerX, centerY, 0);
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    }
+
+    init();
+  </script>
+</body>
+</html>
