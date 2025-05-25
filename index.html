@@ -8,17 +8,53 @@
 </head>
 <body>
     <div id="container">
-        <video id="video" autoplay muted></video>
-        <div id="loading">Cargando probador de gafas...</div>
+        <video id="video" autoplay muted playsinline></video>
+        <div id="loading">
+            <p>Cargando probador de gafas...</p>
+            <div id="progress">
+                <div class="progress-item" id="camera-status">Cámara: Pendiente</div>
+                <div class="progress-item" id="model-status">Modelo 3D: Pendiente</div>
+                <div class="progress-item" id="detection-status">Detección facial: Pendiente</div>
+            </div>
+            <button id="retry-btn" style="display:none;">Reintentar</button>
+        </div>
     </div>
 
-    <!-- Scripts necesarios -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
-    
-    <!-- Nuestro script principal -->
-    <script src="app.js"></script>
+    <!-- Scripts locales como fallback -->
+    <script>
+        // Función para cargar scripts con fallback
+        function loadScript(src, integrity, crossorigin) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                if(integrity) script.integrity = integrity;
+                if(crossorigin) script.crossOrigin = crossorigin;
+                script.onload = resolve;
+                script.onerror = () => {
+                    console.error(`Error al cargar ${src}, intentando alternativas...`);
+                    reject();
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        // Intentar cargar dependencias con fallbacks
+        Promise.allSettled([
+            loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'),
+            loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.min.js'),
+            loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js'),
+            loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js')
+        ]).then(() => {
+            // Cargar nuestro script principal
+            const appScript = document.createElement('script');
+            appScript.src = 'app.js';
+            document.body.appendChild(appScript);
+        }).catch(() => {
+            document.getElementById('loading').innerHTML = `
+                <p>Error al cargar recursos necesarios. Verifica tu conexión a internet.</p>
+                <button onclick="location.reload()">Reintentar</button>
+            `;
+        });
+    </script>
 </body>
 </html>
