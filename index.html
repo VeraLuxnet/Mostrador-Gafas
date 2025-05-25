@@ -1,60 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Probador Virtual de Gafas</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Probador Virtual de Gafas</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    video, canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
+  </style>
 </head>
 <body>
-    <div id="container">
-        <video id="video" autoplay muted playsinline></video>
-        <div id="loading">
-            <p>Cargando probador de gafas...</p>
-            <div id="progress">
-                <div class="progress-item" id="camera-status">Cámara: Pendiente</div>
-                <div class="progress-item" id="model-status">Modelo 3D: Pendiente</div>
-                <div class="progress-item" id="detection-status">Detección facial: Pendiente</div>
-            </div>
-            <button id="retry-btn" style="display:none;">Reintentar</button>
-        </div>
-    </div>
-
-    <!-- Scripts locales como fallback -->
-    <script>
-        // Función para cargar scripts con fallback
-        function loadScript(src, integrity, crossorigin) {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = src;
-                if(integrity) script.integrity = integrity;
-                if(crossorigin) script.crossOrigin = crossorigin;
-                script.onload = resolve;
-                script.onerror = () => {
-                    console.error(`Error al cargar ${src}, intentando alternativas...`);
-                    reject();
-                };
-                document.head.appendChild(script);
-            });
-        }
-
-        // Intentar cargar dependencias con fallbacks
-        Promise.allSettled([
-            loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'),
-            loadScript('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.min.js'),
-            loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js'),
-            loadScript('https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js')
-        ]).then(() => {
-            // Cargar nuestro script principal
-            const appScript = document.createElement('script');
-            appScript.src = 'app.js';
-            document.body.appendChild(appScript);
-        }).catch(() => {
-            document.getElementById('loading').innerHTML = `
-                <p>Error al cargar recursos necesarios. Verifica tu conexión a internet.</p>
-                <button onclick="location.reload()">Reintentar</button>
-            `;
-        });
-    </script>
+  <video id="video" autoplay muted playsinline></video>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
