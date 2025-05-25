@@ -3,16 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <title>Probador Virtual de Gafas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body { margin: 0; overflow: hidden; }
-    video, canvas {
-      position: absolute;
-      top: 0; left: 0;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background: black;
+    }
+
+    video {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       object-fit: cover;
+      z-index: -1;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
     }
   </style>
+  <link rel="icon" href="data:,"> <!-- Esto evita el error de favicon -->
 </head>
 <body>
   <video id="video" autoplay muted playsinline></video>
